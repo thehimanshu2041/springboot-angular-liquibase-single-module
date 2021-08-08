@@ -1,0 +1,24 @@
+[
+    {
+        "displayCode": "HOME",
+        "displayName": "Home",
+        "iconName": "home",
+        "route": "home",
+        "children": []
+    },
+    {
+        "displayCode": "JAVA",
+        "displayName": "Java",
+        "iconName": "source",
+        "route": "",
+        "children": [
+            {
+                "displayCode": "SPRINGBOOT",
+                "displayName": "Spring Boot",
+                "iconName": "dynamic_form",
+                "route": "java/springboot",
+                "children": []
+            }
+        ]
+    }
+]

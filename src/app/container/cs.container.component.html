@@ -1,0 +1,37 @@
+<div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
+  <mat-toolbar color="primary" class="mat-elevation-z5 example-toolbar" [class.bg-dark]="isDarkMode">
+    <mat-toolbar-row class="toolbar-row">
+      <button mat-icon-button (click)="sidenav.toggle()" fxShow="true" fxHide.gt-sm>
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>
+        Standards
+      </span>
+      <span class="menu-spacer"></span>
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <div fxShow="true" fxHide.lt-md="true">
+          <cs-horizontal-main-menu [menuItemList]="navItems"></cs-horizontal-main-menu>
+        </div>
+        <mat-slide-toggle [(ngModel)]="matToggleBoolean" (change)="darkMode($event.checked)" class="ml-1">
+          <mat-icon *ngIf="colorScheme.isNightMode === 'Y'">nights_stay</mat-icon>
+          <mat-icon *ngIf="colorScheme.isNightMode === 'N'">wb_sunny</mat-icon>
+        </mat-slide-toggle>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+    <mat-sidenav #appDrawer #sidenav mode="over" opened="false" class="w-75"
+      [mode]="mobileQuery.matches ? 'over' : 'over'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
+      <mat-nav-list>
+        <cs-vertical-nav-component *ngFor="let item of navItems" [item]="item"></cs-vertical-nav-component>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content class="mx-3">
+      <div class="mt-3">
+        <cs-alert-area [retreatToSnackbar]="true"></cs-alert-area>
+      </div>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

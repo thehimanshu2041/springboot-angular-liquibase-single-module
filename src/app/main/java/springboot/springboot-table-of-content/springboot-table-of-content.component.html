@@ -1,0 +1,24 @@
+<mat-card class="pt-3">
+  <h4 class="mx-3">Table of Contents</h4>
+  <mat-accordion>
+    <ng-template ngFor let-value [ngForOf]="toc">
+      <ng-template [ngIf]="value.child?.length > 0">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <span class="py-1">{{value.id}} {{value.heading}}</span>
+          </mat-expansion-panel-header>
+          <mat-list role="list" *ngFor="let child of value.child" class="w-100">
+            <button mat-button class="w-100" fxLayoutAlign="start start">{{child.id}} {{child.name}}</button>
+          </mat-list>
+        </mat-expansion-panel>
+      </ng-template>
+      <ng-template [ngIf]="value.child?.length <= 0">
+        <mat-list role="list" class="w-100">
+          <button mat-button class="w-100" fxLayoutAlign="start start">
+            <span class="ml-2">{{value.id}} {{value.name}}</span>
+          </button>
+        </mat-list>
+      </ng-template>
+    </ng-template>
+  </mat-accordion>
+</mat-card>

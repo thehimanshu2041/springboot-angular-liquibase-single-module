@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+  <Properties>
+    <Property name="LOG_PATTERN">%highlight{ [%p] %d{dd MMM yyyy HH:mm:ss,SSS}
+      [%t] %x %c %M - %m%n}{FATAL=white, ERROR=Blink red, WARN=Underline
+      yellow, INFO=Bright white, DEBUG=Bright green, TRACE=blue}
+    </Property>
+    <Property name="APP_LOG_ROOT">trisul-logs</Property>
+  </Properties>
+
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+    </Console>
+    
+    <RollingFile name="frameworkLog" fileName="${APP_LOG_ROOT}/trisul-controller-framework.log"
+                 filePattern="${APP_LOG_ROOT}/trisul-controller-framework-%d{yyyy-MM-dd}-%i.log">
+      <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR"
+                        onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="19500KB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+
+    <RollingFile name="debugLog" fileName="${APP_LOG_ROOT}/trisul-controller-debug.log"
+                 filePattern="${APP_LOG_ROOT}/trisul-controller-debug-%d{yyyy-MM-dd}-%i.log">
+      <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG"
+                        onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="19500KB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+
+    <RollingFile name="infoLog" fileName="${APP_LOG_ROOT}/trisul-controller-info.log"
+                 filePattern="${APP_LOG_ROOT}/trisul-controller-info-%d{yyyy-MM-dd}-%i.log">
+      <LevelRangeFilter minLevel="INFO" maxLevel="INFO"
+                        onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="19500KB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+
+    <RollingFile name="errorLog" fileName="${APP_LOG_ROOT}/trisul-controller-error.log"
+                 filePattern="${APP_LOG_ROOT}/trisul-controller-error-%d{yyyy-MM-dd}-%i.log">
+      <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR"
+                        onMatch="ACCEPT" onMismatch="DENY"/>
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="19500KB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="10"/>
+    </RollingFile>
+
+    <RollingFile name="perfLog" fileName="${APP_LOG_ROOT}/trisul-controller-perf.log"
+                 filePattern="${APP_LOG_ROOT}/trisul-controller-perf-%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="19500KB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="1"/>
+    </RollingFile>
+
+    <RollingFile name="traceLog" fileName="${APP_LOG_ROOT}/trisul-controller-trace.log"
+                 filePattern="${APP_LOG_ROOT}/trisul-controller-trace-%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="19500KB"/>
+      </Policies>
+      <DefaultRolloverStrategy max="1"/>
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <Logger name="com.microservice.is" additivity="false" level="debug">
+      <AppenderRef ref="debugLog"/>
+      <AppenderRef ref="infoLog"/>
+      <AppenderRef ref="errorLog"/>
+      <AppenderRef ref="console"/>
+    </Logger>
+
+    <Logger name="org.springframework.boot" additivity="false"
+            level="info">
+      <AppenderRef ref="infoLog"/>
+      <AppenderRef ref="perfLog"/>
+      <AppenderRef ref="console"/>
+    </Logger>
+
+    <Root level="warn">
+      <AppenderRef ref="infoLog"/>
+      <AppenderRef ref="console"/>
+    </Root>
+  </Loggers>
+</Configuration>

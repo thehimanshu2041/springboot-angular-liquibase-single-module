@@ -1,0 +1,233 @@
+openapi: 3.0.1
+info:
+  title: Trisul Service
+  description: Trisul Service
+  version: "0.1"
+servers:
+  - url: http://localhost:2041/trisul
+    description: Generated server url
+tags:
+  - name: User Service
+    description: User Service.
+paths:
+  /service/user/registration:
+    post:
+      tags:
+        - User Service
+      summary: User Registration
+      description: It will create a new user with user role.
+      operationId: doRegistration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDetail'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "409":
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "200":
+          description: Operation Successful
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /service/user/login:
+    post:
+      tags:
+        - User Service
+      summary: User login
+      description: User login
+      operationId: doLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDetail'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "409":
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "200":
+          description: Operation Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationDetail'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        description:
+          type: string
+    ErrorMessage:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        timestamp:
+          type: string
+          format: date-time
+        error:
+          $ref: '#/components/schemas/Error'
+    UserDetail:
+      required:
+        - dob
+        - email
+        - firstName
+        - gender
+        - lastName
+        - mobile
+        - password
+        - title
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+          description: Provide username
+          format: string
+        email:
+          type: string
+          description: Provide email
+          format: string
+        password:
+          type: string
+          description: Provide password
+          format: string
+        title:
+          maxLength: 10
+          minLength: 2
+          type: string
+          description: Provide title
+          format: string
+        firstName:
+          maxLength: 20
+          minLength: 5
+          type: string
+          description: Provide firstname
+          format: string
+        lastName:
+          maxLength: 20
+          minLength: 2
+          type: string
+          description: Provide lastname
+          format: string
+        gender:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Provide gender
+          format: string
+        dob:
+          type: string
+          description: Provide dob
+          format: date-time
+        mobile:
+          type: string
+          description: Provide mobile
+          format: string
+      description: UserDetail model
+    LoginDetail:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+          description: Provide username
+          format: string
+        password:
+          type: string
+          description: Provide password
+          format: string
+      description: Login detail
+    AuthenticationDetail:
+      required:
+        - access_token
+        - roles
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: Provided access token
+          format: string
+        roles:
+          uniqueItems: true
+          type: array
+          description: User roles
+          items:
+            type: string
+            description: User roles
+      description: Authentication Detail
+  securitySchemes:
+    Authorization:
+      type: http
+      description: "**The API operations may require HTTP Bearer authentication scheme\
+        \ with JWT format as defined in Open API 3.0.**\nAn Authorization header must\
+        \ be present if the operation requires authorization, \n\nfor example:\n```\n\
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n\
+        ```\n"
+      scheme: bearer
+      bearerFormat: JWT

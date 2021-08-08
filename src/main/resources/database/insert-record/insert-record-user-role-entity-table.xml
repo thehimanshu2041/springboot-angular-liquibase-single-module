@@ -1,0 +1,76 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+  <changeSet author="h3kumar" id="IURET-2041-27032021-01">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM USER_ROLE_ENTITY;
+      </sqlCheck>
+    </preConditions>
+    <insert tableName="USER_ROLE_ENTITY">
+      <column name="USER_ROLE_ID" valueComputed="NEXTVAL('USER_ROLE_ENTITY_SEQ')"/>
+      <column name="USER_ROLE_NAME" value="USER"/>
+      <column name="USER_ROLE_DESCRIPTION" value="USER"/>
+      <column name="USER_ROLE_CREATED_BY" value="ENGINE"/>
+      <column name="USER_ROLE_UPDATED_BY" value="ENGINE"/>
+      <column name="USER_ROLE_CREATED_DATE_TIME" valueDate="CURRENT_TIMESTAMP"/>
+      <column name="USER_ROLE_MODIFIED_DATE_TIME" valueDate="CURRENT_TIMESTAMP"/>
+    </insert>
+    <insert tableName="USER_ROLE_ENTITY">
+      <column name="USER_ROLE_ID" valueComputed="NEXTVAL('USER_ROLE_ENTITY_SEQ')"/>
+      <column name="USER_ROLE_NAME" value="ADMIN"/>
+      <column name="USER_ROLE_DESCRIPTION" value="ADMIN"/>
+      <column name="USER_ROLE_CREATED_BY" value="ENGINE"/>
+      <column name="USER_ROLE_UPDATED_BY" value="ENGINE"/>
+      <column name="USER_ROLE_CREATED_DATE_TIME" valueDate="CURRENT_TIMESTAMP"/>
+      <column name="USER_ROLE_MODIFIED_DATE_TIME" valueDate="CURRENT_TIMESTAMP"/>
+    </insert>
+  </changeSet>
+
+  <changeSet author="h3kumar" id="IURETT-2041-16052021-02">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM USER_ENTITY;
+      </sqlCheck>
+    </preConditions>
+    <insert tableName="USER_ENTITY">
+      <column name="USER_ID" valueComputed="NEXTVAL('USER_ENTITY_SEQ')"/>
+      <column name="USER_NAME" value="himanshusingh2041"/>
+      <column name="USER_EMAIL" value="himanshusingh2041@gmail.com"/>
+      <column name="USER_PASSWORD" value="$2a$10$R9YDUDK2GqG33f4NkSnd.O9WvpUCfeylxd1FqJI3O0i13GmpkjXia"/>
+      <column name="USER_TITLE" value="MR"/>
+      <column name="USER_FIRST_NAME" value="Himanshu"/>
+      <column name="USER_LAST_NAME" value="Kumar"/>
+      <column name="USER_GENDER" value="M"/>
+      <column name="USER_MOBILE" value="9810249301"/>
+      <column name="USER_DOB" value="1994-11-04 12:21:32.065"/>
+      <column name="USER_IS_DELETED" value="false"/>
+      <column name="USER_CREATED_BY" value="ENGINE"/>
+      <column name="USER_UPDATED_BY" value="ENGINE"/>
+      <column name="USER_CREATED_DATE_TIME" valueDate="CURRENT_TIMESTAMP"/>
+      <column name="USER_MODIFIED_DATE_TIME" valueDate="CURRENT_TIMESTAMP"/>
+    </insert>
+  </changeSet>
+
+  <changeSet author="h3kumar" id="IURETUR-2041-27032021-03">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*) FROM USER_ENTITY_USER_ROLE_ENTITY;;
+      </sqlCheck>
+    </preConditions>
+    <insert tableName="USER_ENTITY_USER_ROLE_ENTITY">
+      <column name="USER_ID" valueComputed="(SELECT USER_ID FROM USER_ENTITY ORDER BY USER_ID DESC LIMIT 1)"/>
+      <column name="USER_ROLE_ID"
+              valueComputed="(SELECT USER_ROLE_ID FROM USER_ROLE_ENTITY ORDER BY USER_ROLE_ID DESC LIMIT 1)"/>
+    </insert>
+    <insert tableName="USER_ENTITY_USER_ROLE_ENTITY">
+      <column name="USER_ID" valueComputed="(SELECT USER_ID FROM USER_ENTITY ORDER BY USER_ID DESC LIMIT 1)"/>
+      <column name="USER_ROLE_ID"
+              valueComputed="(SELECT USER_ROLE_ID FROM USER_ROLE_ENTITY ORDER BY USER_ROLE_ID ASC LIMIT 1)"/>
+    </insert>
+  </changeSet>
+</databaseChangeLog>

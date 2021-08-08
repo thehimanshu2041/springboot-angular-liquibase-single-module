@@ -1,0 +1,4 @@
+@import './cs.typography.mapping.scss';
+
+$cs-mat-type-config: get-default-type-config($font-family-base);
+@include mat-core($cs-mat-type-config);
