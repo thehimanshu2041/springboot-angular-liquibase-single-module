@@ -8,6 +8,7 @@
   <!-- Include file to create new table -->
   <include file="/database/create-table/create-user-entity-table.xml"/>
   <include file="/database/create-table/create-user-role-entity-table.xml"/>
+  <include file="/database/create-table/create-menu-entity-table.xml"/>
   <include file="/database/create-table/create-user-entity-user-role-entity-table.xml"/>
 
   <!-- Include file to create constraint on the table -->
@@ -17,5 +18,6 @@
 
   <!-- Include file to insert default records -->
   <include file="/database/insert-record/insert-record-user-role-entity-table.xml"/>
+  <include file="/database/insert-record/insert-record-menu-entity-table.xml"/>
 
 </databaseChangeLog>

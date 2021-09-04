@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-import { ThemeService } from './shared/service/theme.service';
+import { MatIconRegistry } from '@angular/material/icon';
+import { ThemeService } from './shared/services/theme.service';
 
 @Component({
-  selector: 'cs-app-root',
-  template: '<cs-container-component></cs-container-component>'
+  selector: 'ts-app-root',
+  template: '<ts-trisul-container-component></ts-trisul-container-component>'
 })
 export class AppComponent {
 
-  constructor(private themeService: ThemeService) {
-    this.themeService._setColorOnOnload();
+  constructor(themeService: ThemeService, registry: MatIconRegistry) {
+    registry.setDefaultFontSetClass('material-icons');
+    themeService._setColorOnOnload();
   }
 }

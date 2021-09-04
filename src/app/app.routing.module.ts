@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './login';
-import { HomeComponent } from './main/home.component';
+import { LoginComponent } from './main';
 
 const routes: Routes = [
   {
@@ -13,13 +12,9 @@ const routes: Routes = [
     component: LoginComponent
   },
   {
-    path: 'home',
-    component: HomeComponent
-  },
-  {
-    path: 'java',
-    loadChildren: () => import('./main/java/java.module').then(module => module.JavaModule)
-  },
+    path: 'dashboard',
+    loadChildren: () => import('./main/dashboard').then(module => module.DashboardModule)
+  }
 ];
 
 @NgModule({

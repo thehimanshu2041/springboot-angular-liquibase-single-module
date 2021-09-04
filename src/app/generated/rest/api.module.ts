@@ -3,6 +3,7 @@ import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 
+import { TrisulServiceService } from './api/trisulService.service';
 import { UserServiceService } from './api/userService.service';
 
 @NgModule({
@@ -10,6 +11,7 @@ import { UserServiceService } from './api/userService.service';
   declarations: [],
   exports:      [],
   providers: [
+    TrisulServiceService,
     UserServiceService ]
 })
 export class ApiModule {

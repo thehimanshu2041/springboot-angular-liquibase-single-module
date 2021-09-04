@@ -7,6 +7,8 @@ servers:
   - url: http://localhost:2041/trisul
     description: Generated server url
 tags:
+  - name: Trisul Service
+    description: Trisul Service.
   - name: User Service
     description: User Service.
 paths:
@@ -24,8 +26,8 @@ paths:
               $ref: '#/components/schemas/UserDetail'
         required: true
       responses:
-        "400":
-          description: Bad Request
+        "500":
+          description: Internal Server Error
           content:
             '*/*':
               schema:
@@ -36,20 +38,20 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: Internal Server Error
+        "400":
+          description: Bad Request
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
         "404":
           description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
           content:
             '*/*':
               schema:
@@ -74,8 +76,8 @@ paths:
               $ref: '#/components/schemas/LoginDetail'
         required: true
       responses:
-        "400":
-          description: Bad Request
+        "500":
+          description: Internal Server Error
           content:
             '*/*':
               schema:
@@ -86,14 +88,8 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        "500":
-          description: Internal Server Error
+        "400":
+          description: Bad Request
           content:
             '*/*':
               schema:
@@ -104,12 +100,114 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
         "200":
           description: Operation Successful
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthenticationDetail'
+  /service/create-menu:
+    post:
+      tags:
+        - Trisul Service
+      summary: Menu Detail
+      description: It will create a new menu item.
+      operationId: createMenu
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuDetail'
+        required: true
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "409":
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "200":
+          description: Operation Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuDetail'
+  /service/menu-list:
+    get:
+      tags:
+        - Trisul Service
+      summary: Menu List
+      description: It will give you list of configured menu.
+      operationId: getMenuList
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "409":
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "200":
+          description: Operation Successful
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuDetail'
 components:
   schemas:
     Error:
@@ -221,6 +319,89 @@ components:
             type: string
             description: User roles
       description: Authentication Detail
+    MenuDetail:
+      required:
+        - menuDescription
+        - menuIcon
+        - menuIsActive
+        - menuIsAdmin
+        - menuIsAuthReq
+        - menuIsDeleted
+        - menuIsVisible
+        - menuKey
+        - menuName
+        - menuParentID
+        - menuPath
+        - menuPriority
+      type: object
+      properties:
+        menuID:
+          type: integer
+          description: Provide menuID.
+          format: int64
+        menuParentID:
+          type: integer
+          description: Provide parent menuID.
+          format: int64
+        menuName:
+          maxLength: 50
+          minLength: 2
+          type: string
+          description: Provide menu name.
+          format: string
+        menuPath:
+          maxLength: 50
+          minLength: 2
+          type: string
+          description: Provide menu path.
+          format: string
+        menuDescription:
+          maxLength: 50
+          minLength: 5
+          type: string
+          description: Provide menu description.
+          format: string
+        menuIcon:
+          maxLength: 50
+          minLength: 2
+          type: string
+          description: Provide menu icon.
+          format: string
+        menuKey:
+          maxLength: 50
+          minLength: 2
+          type: string
+          description: Provide menu key.
+          format: string
+        menuIsActive:
+          type: boolean
+          description: Provide menu active status.
+          format: boolean
+        menuIsDeleted:
+          type: boolean
+          description: Provide menu deleted status.
+          format: boolean
+        menuIsAdmin:
+          type: boolean
+          description: Provide menu admin status.
+          format: boolean
+        menuIsVisible:
+          type: boolean
+          description: Provide menu visibility status.
+          format: boolean
+        menuIsAuthReq:
+          type: boolean
+          description: Provide menu auth status.
+          format: boolean
+        menuPriority:
+          type: integer
+          description: Provide menu priority.
+          format: int64
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuDetail'
+      description: Menu Detail
   securitySchemes:
     Authorization:
       type: http

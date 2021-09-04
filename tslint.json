@@ -6,13 +6,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "cs",
+      "ts",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "cs",
+      "ts",
       "kebab-case"
     ],
     "no-inputs-metadata-property": true,
@@ -194,6 +194,11 @@
     "import-blacklist": [
       true,
       "rxjs-compat"
+    ]
+  },
+  "linterOptions": {
+    "exclude": [
+      "**/generated/**/*"
     ]
   }
 }
