@@ -2,28 +2,34 @@ package com.trisul.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.trisul.core.bean.validation.CodeValidator;
 import com.trisul.core.bean.validation.MobileNumberValidator;
 import com.trisul.core.bean.validation.PasswordValidator;
 import com.trisul.core.bean.validation.UsernameValidator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
-/**
- * @author h3kumar
- * @since 16/05/2021
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Validated
 @Schema(name = "UserDetail", description = "UserDetail model")
 public class UserDetail {
+
+  @Schema(format = "number", description = "Provide id")
+  @JsonProperty("id")
+  private Long id;
 
   @NotNull(message = "Username can't be null.")
   @UsernameValidator
@@ -44,10 +50,9 @@ public class UserDetail {
   private String password;
 
   @NotNull(message = "Title can't be null.")
-  @Size(min = 2, max = 10, message = "Title should be between 2 and 10 characters.")
-  @Schema(format = "string", required = true, description = "Provide title")
+  @CodeValidator
   @JsonProperty("title")
-  private String title;
+  private CodeDetail title = new CodeDetail();
 
   @NotNull(message = "First name can't be null.")
   @Size(min = 5, max = 20, message = "First name should be between 5 and 20 characters.")
@@ -62,10 +67,9 @@ public class UserDetail {
   private String lastName;
 
   @NotNull(message = "Gender can't be null.")
-  @Size(min = 1, max = 10, message = "Gender should be between 1 and 10 characters.")
-  @Schema(format = "string", required = true, description = "Provide gender")
+  @CodeValidator
   @JsonProperty("gender")
-  private String gender;
+  private CodeDetail gender = new CodeDetail();
 
   @NotNull(message = "DOB can't be null.")
   @Schema(format = "date-time", required = true, description = "Provide dob")
@@ -77,4 +81,15 @@ public class UserDetail {
   @Schema(format = "string", required = true, description = "Provide mobile")
   @JsonProperty("mobile")
   private String mobile;
+
+  @Valid
+  @NotNull(message = "Address can't be null.")
+  @Schema(required = true, description = "Provide address")
+  @JsonProperty("addressDetail")
+  private AddressDetail addressDetail = new AddressDetail();
+
+  @NotNull(message = "Card detail can't be null.")
+  @Schema(required = true, description = "Provide card info")
+  @JsonProperty("cardDetail")
+  private CardDetail cardDetail = new CardDetail();
 }

@@ -13,8 +13,8 @@ public class MenuDaoImpl implements MenuDao {
   @Autowired MenuRepository menuRepository;
 
   @Override
-  public List<MenuEntity> getMenuList() {
-    return menuRepository.findAll();
+  public List<MenuEntity> getMenuList(Boolean status) {
+    return menuRepository.findAllByMenuIsAuthReqOrderByMenuPriorityAsc(status);
   }
 
   @Override

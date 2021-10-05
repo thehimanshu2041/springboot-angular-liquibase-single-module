@@ -8,7 +8,8 @@ public enum FaultCodeCache implements FaultCode {
   TS_0003,
   TS_0004,
   TS_0005,
-  TS_0006;
+  TS_0006,
+  TS_0007;
 
   private static final String BUNDLE_NAME = "i18n.exception";
 

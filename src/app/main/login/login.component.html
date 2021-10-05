@@ -4,11 +4,13 @@
       <mat-card class="col-sm-10 col-md-6 col-lg-6 col-xl-4 mat-elevation-z5">
         <div fxLayoutAlign="center center">
           <h3>
-            <strong>{{ "main.login.title" | translate }}</strong>
+            <strong class="ts-primary">{{
+              "main.login.title" | translate
+            }}</strong>
           </h3>
         </div>
         <div class="card-body">
-          <mat-form-field class="w-100">
+          <mat-form-field class="w-100" appearance="outline">
             <mat-label>{{ "main.login.label.username" | translate }}</mat-label>
             <input
               matInput
@@ -16,9 +18,8 @@
               #usernameInput
               [(ngModel)]="username"
               required
-              autofocus
+              tsAutoFocus="true"
             />
-            <mat-icon matPrefix class="text-muted">person</mat-icon>
           </mat-form-field>
           <mat-form-field class="w-100">
             <mat-label>{{ "main.login.label.password" | translate }}</mat-label>
@@ -29,7 +30,6 @@
               required
               [(ngModel)]="password"
             />
-            <mat-icon matPrefix class="text-muted">lock</mat-icon>
           </mat-form-field>
         </div>
         <button
@@ -39,7 +39,8 @@
           color="primary"
           (click)="loginForm.valid ? login() : null"
         >
-          <mat-icon>logout</mat-icon> {{ "main.login.label.login" | translate }}
+          <mat-icon>login</mat-icon>
+          {{ "main.login.label.login" | translate }}
         </button>
       </mat-card>
     </div>

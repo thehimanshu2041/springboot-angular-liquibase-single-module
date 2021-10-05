@@ -17,9 +17,7 @@ import { HttpClient, HttpHeaders, HttpParams,
 import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
-import { AuthenticationDetail } from '../model/models';
 import { ErrorMessage } from '../model/models';
-import { LoginDetail } from '../model/models';
 import { UserDetail } from '../model/models';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -87,22 +85,25 @@ export class UserServiceService {
     }
 
     /**
-     * User login
-     * User login
-     * @param loginDetail 
+     * User detail
+     * User detail
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public doLogin(loginDetail: LoginDetail, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<AuthenticationDetail>;
-    public doLogin(loginDetail: LoginDetail, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<HttpResponse<AuthenticationDetail>>;
-    public doLogin(loginDetail: LoginDetail, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<HttpEvent<AuthenticationDetail>>;
-    public doLogin(loginDetail: LoginDetail, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<any> {
-        if (loginDetail === null || loginDetail === undefined) {
-            throw new Error('Required parameter loginDetail was null or undefined when calling doLogin.');
-        }
+    public getUserDetail(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<UserDetail>;
+    public getUserDetail(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<HttpResponse<UserDetail>>;
+    public getUserDetail(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<HttpEvent<UserDetail>>;
+    public getUserDetail(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<any> {
 
         let headers = this.defaultHeaders;
 
+        // authentication (Authorization) required
+        if (this.configuration.accessToken) {
+            const accessToken = typeof this.configuration.accessToken === 'function'
+                ? this.configuration.accessToken()
+                : this.configuration.accessToken;
+            headers = headers.set('Authorization', 'Bearer ' + accessToken);
+        }
         let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (httpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -117,79 +118,12 @@ export class UserServiceService {
         }
 
 
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            headers = headers.set('Content-Type', httpContentTypeSelected);
-        }
-
         let responseType: 'text' | 'json' = 'json';
         if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
             responseType = 'text';
         }
 
-        return this.httpClient.post<AuthenticationDetail>(`${this.configuration.basePath}/service/user/login`,
-            loginDetail,
-            {
-                responseType: <any>responseType,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * User Registration
-     * It will create a new user with user role.
-     * @param userDetail 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public doRegistration(userDetail: UserDetail, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<boolean>;
-    public doRegistration(userDetail: UserDetail, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<HttpResponse<boolean>>;
-    public doRegistration(userDetail: UserDetail, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<HttpEvent<boolean>>;
-    public doRegistration(userDetail: UserDetail, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: '*/*' | 'application/json'}): Observable<any> {
-        if (userDetail === null || userDetail === undefined) {
-            throw new Error('Required parameter userDetail was null or undefined when calling doRegistration.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
-        if (httpHeaderAcceptSelected === undefined) {
-            // to determine the Accept header
-            const httpHeaderAccepts: string[] = [
-                '*/*',
-                'application/json'
-            ];
-            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        }
-        if (httpHeaderAcceptSelected !== undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            headers = headers.set('Content-Type', httpContentTypeSelected);
-        }
-
-        let responseType: 'text' | 'json' = 'json';
-        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
-            responseType = 'text';
-        }
-
-        return this.httpClient.post<boolean>(`${this.configuration.basePath}/service/user/registration`,
-            userDetail,
+        return this.httpClient.get<UserDetail>(`${this.configuration.basePath}/service/api/user`,
             {
                 responseType: <any>responseType,
                 withCredentials: this.configuration.withCredentials,

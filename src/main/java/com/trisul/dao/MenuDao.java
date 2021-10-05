@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface MenuDao {
 
-  List<MenuEntity> getMenuList();
+  List<MenuEntity> getMenuList(Boolean status);
 
   MenuEntity createMenuDetail(MenuEntity menuEntity);
 }

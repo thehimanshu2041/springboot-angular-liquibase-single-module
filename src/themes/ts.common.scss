@@ -2,10 +2,16 @@ button:focus {
   outline: transparent !important;
 }
 
-.spacer {
+.spacer,
+.menu-spacer {
   flex: 1 1 auto;
 }
 
-.menu-spacer {
-  flex: 1 1 auto;
+.currency-fraction,
+.currency-dec-point {
+  font-size: 75%;
+}
+
+.ts-primary {
+  color: var(--theme-primary-500);
 }

@@ -1,11 +1,8 @@
 package com.trisul.dao;
 
+import com.trisul.entity.IPEntity;
 import com.trisul.entity.UserEntity;
 
-/**
- * @author h3kumar
- * @since 16/05/2021
- */
 public interface UserDao {
 
   UserEntity findByUsername(String username);
@@ -13,4 +10,6 @@ public interface UserDao {
   UserEntity findByEmail(String email);
 
   UserEntity save(UserEntity userEntity);
+
+  void saveTrackedRequest(IPEntity ipEntity);
 }

@@ -1,22 +1,21 @@
 package com.trisul.entity;
 
+import com.trisul.core.security.user.UserStoreImpl;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-/**
- * @author h3kumar
- * @since 27/03/2021
- */
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Table(name = "USER_ENTITY")
 public class UserEntity {
 
@@ -36,16 +35,16 @@ public class UserEntity {
   private String password;
 
   @Column(name = "USER_TITLE", nullable = false)
-  private String title;
+  private Long title;
 
   @Column(name = "USER_FIRST_NAME", nullable = false)
   private String firstName;
 
-  @Column(name = "USER_LAST_NAME", nullable = true)
+  @Column(name = "USER_LAST_NAME", nullable = false)
   private String lastName;
 
   @Column(name = "USER_GENDER", nullable = false)
-  private String gender;
+  private Long gender;
 
   @Column(name = "USER_DOB", nullable = false)
   private Date dob;
@@ -53,14 +52,14 @@ public class UserEntity {
   @Column(name = "USER_MOBILE", nullable = false)
   private String mobile;
 
-  @Column(name = "USER_IS_DELETED", nullable = false, columnDefinition = "tinyint(1) default 0")
-  private boolean deleted;
+  @Column(name = "USER_IS_DELETED", nullable = false)
+  private Boolean deleted;
 
   @Column(name = "USER_CREATED_BY", nullable = false)
-  private String createdBy = "ENGINE";
+  private String createdBy;
 
   @Column(name = "USER_UPDATED_BY", nullable = false)
-  private String updatedBy = "ENGINE";
+  private String updatedBy;
 
   @CreationTimestamp
   @Column(name = "USER_CREATED_DATE_TIME", nullable = false)
@@ -76,4 +75,24 @@ public class UserEntity {
       joinColumns = @JoinColumn(name = "USER_ID"),
       inverseJoinColumns = @JoinColumn(name = "USER_ROLE_ID"))
   private Set<UserRoleEntity> userRoles;
+
+  @OneToOne(mappedBy = "userEntity", cascade = CascadeType.ALL)
+  private CardEntity cardEntity;
+
+  @OneToOne(mappedBy = "userEntity", cascade = CascadeType.ALL)
+  private AddressEntity addressEntity;
+
+  @PrePersist
+  private void prePersistFunction() {
+    UserStoreImpl userStore = new UserStoreImpl();
+    this.createdBy = userStore.getLoggedInUser();
+    this.updatedBy = userStore.getLoggedInUser();
+    this.deleted = false;
+  }
+
+  @PreUpdate
+  public void preUpdateFunction() {
+    UserStoreImpl userStore = new UserStoreImpl();
+    this.updatedBy = userStore.getLoggedInUser();
+  }
 }

@@ -1,9 +1,5 @@
 package com.trisul.constant;
 
-/**
- * @author h3kumar
- * @since 15/05/2021
- */
 public class WebResource {
 
   public static final String CTX_PATH = "/service";

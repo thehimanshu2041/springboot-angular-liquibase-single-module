@@ -15,6 +15,7 @@ export class LoginComponent implements OnDestroy {
 
   username: string;
   password: string;
+
   @ViewChild('usernameInput', { static: false }) usernameInput: ElementRef;
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 

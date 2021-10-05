@@ -28,7 +28,9 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/.htaccess",
+              "src/assets/images"
             ],
             "styles": [
               "src/styles.scss",
@@ -38,7 +40,17 @@
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/intl-tel-input/build/js/utils.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "@angular/common",
+              "moment-timezone",
+              "moment",
+              "moment-range",
+              "intl-tel-input",
+              "tinycolor2"
             ]
           },
           "configurations": {
@@ -51,7 +63,7 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,

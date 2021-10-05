@@ -14,8 +14,11 @@ import {
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { LoginComponent } from './main';
-import { ErrorHandlerInterceptor, RequestOptionInterceptor } from './shared/authentication';
+import { AddressComponent, CardDetailComponent, CreditCardComponent, DashboardComponent, DemoTileComponent, LoginComponent, PasswordStrengthMeterComponent, RegistrationComponent, UserInfoTileComponent } from './main';
+import { AuthGuard, ErrorHandlerInterceptor, RequestOptionInterceptor } from './shared/authentication';
+import { NoAuthGuard } from './shared/authentication/no.auth.guard';
+import { ToBeImplementedComponent } from './main/dashboard/custom-tile-page';
+import { CustomTilePageComponent } from './main/dashboard/custom-tile-page/custom.tile.page.component';
 
 const DECLARE_COMPONENT = [
   AppComponent,
@@ -23,12 +26,25 @@ const DECLARE_COMPONENT = [
   HorizontalMainMenuComponent,
   HorizontalMenuComponent,
   VerticalMenuComponent,
-  LoginComponent
+  LoginComponent,
+  RegistrationComponent,
+  PasswordStrengthMeterComponent,
+  DashboardComponent,
+  CustomTilePageComponent,
+  ToBeImplementedComponent,
+  AddressComponent,
+  CardDetailComponent,
+  CreditCardComponent
 ];
+
+const TILE_TYPES = [DemoTileComponent, UserInfoTileComponent];
+
+TILE_TYPES.forEach(f => f);
 
 @NgModule({
   declarations: [
-    DECLARE_COMPONENT
+    DECLARE_COMPONENT,
+    TILE_TYPES
   ],
   imports: [
     BrowserModule,
@@ -38,6 +54,8 @@ const DECLARE_COMPONENT = [
     AppRoutingModule
   ],
   providers: [
+    AuthGuard,
+    NoAuthGuard,
     {
       provide: LocationStrategy,
       useClass: HashLocationStrategy

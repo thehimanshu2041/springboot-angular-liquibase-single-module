@@ -2,7 +2,7 @@ import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MenuDetail } from 'src/app/generated/rest';
-import { MenuService } from '../../service';
+import { MenuService } from 'src/app/shared';
 
 @Component({
   selector: 'ts-vertical-menu-component',

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,25 +33,20 @@ public class JwtTokenUtil implements Serializable {
     return doGenerateToken(claims, username);
   }
 
+  public Boolean validateToken(String token) {
+    return validateToken(token, getUsernameFromToken(token));
+  }
+
   public Boolean validateToken(String token, String username) {
     final String usernameFromToken = getUsernameFromToken(token);
     return (usernameFromToken.equals(username) && !isTokenExpired(token));
   }
 
-  public Boolean isTokenValid(String username, HttpServletRequest httpServletRequest) {
-    try {
-      final String requestTokenHeader = httpServletRequest.getHeader(SeqConstant.HEADER);
-      String jwtToken = null;
-      if (requestTokenHeader != null && requestTokenHeader.startsWith(SeqConstant.BEARER_TOKEN)) {
-        jwtToken = requestTokenHeader.substring(7);
-      }
-      if (null != jwtToken && null != username && validateToken(jwtToken, username)) {
-        return true;
-      }
-      return false;
-    } catch (Exception e) {
-      return false;
+  public String getValidToken(String requestTokenHeader) {
+    if (requestTokenHeader != null && requestTokenHeader.startsWith(SeqConstant.BEARER_TOKEN)) {
+      return requestTokenHeader.substring(7);
     }
+    return null;
   }
 
   private Claims getAllClaimsFromToken(String token) {

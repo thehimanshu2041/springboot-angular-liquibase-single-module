@@ -4,17 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Set;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- * @author h3kumar
- * @since 10/04/2021
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(name = "AuthenticationDetail", description = "Authentication Detail")
 public class AuthenticationDetail {

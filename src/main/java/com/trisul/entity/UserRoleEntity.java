@@ -1,21 +1,20 @@
 package com.trisul.entity;
 
-import com.trisul.model.RoleTypeEnum;
+import com.trisul.core.security.jwt.RoleTypeEnum;
+import com.trisul.core.security.user.UserStoreImpl;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- * @author h3kumar
- * @since 27/03/2021
- */
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Table(name = "USER_ROLE_ENTITY")
 public class UserRoleEntity {
 
@@ -39,14 +38,27 @@ public class UserRoleEntity {
   private String description;
 
   @Column(name = "USER_ROLE_CREATED_BY", nullable = false)
-  private String createdBy = "ENGINE";
+  private String createdBy;
 
   @Column(name = "USER_ROLE_UPDATED_BY", nullable = false)
-  private String updatedBy = "ENGINE";
+  private String updatedBy;
 
   @Column(name = "USER_ROLE_CREATED_DATE_TIME", nullable = false)
   private Date createdDateTime;
 
   @Column(name = "USER_ROLE_MODIFIED_DATE_TIME", nullable = false)
   private Date modifiedDateTime;
+
+  @PrePersist
+  private void prePersistFunction() {
+    UserStoreImpl userStore = new UserStoreImpl();
+    this.createdBy = userStore.getLoggedInUser();
+    this.updatedBy = userStore.getLoggedInUser();
+  }
+
+  @PreUpdate
+  public void preUpdateFunction() {
+    UserStoreImpl userStore = new UserStoreImpl();
+    this.updatedBy = userStore.getLoggedInUser();
+  }
 }

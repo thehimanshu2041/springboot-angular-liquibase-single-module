@@ -2,6 +2,7 @@ package com.trisul.core.security.jwt;
 
 import com.trisul.core.factory.MessageResource;
 import com.trisul.core.logging.LoggerCodeCache;
+import com.trisul.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -22,9 +23,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-  @Autowired private JwtTokenUtil jwtTokenUtil;
+  @Autowired JwtTokenUtil jwtTokenUtil;
 
   @Autowired UserDetailsService userDetailsService;
+
+  @Autowired UserService userService;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JwtRequestFilter.class);
 
@@ -34,9 +37,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     final String requestTokenHeader = request.getHeader(SeqConstant.HEADER);
     String username = null;
-    String jwtToken = null;
-    if (requestTokenHeader != null && requestTokenHeader.startsWith(SeqConstant.BEARER_TOKEN)) {
-      jwtToken = requestTokenHeader.substring(7);
+    String jwtToken = jwtTokenUtil.getValidToken(requestTokenHeader);
+    if (jwtToken != null) {
       try {
         username = jwtTokenUtil.getUsernameFromToken(jwtToken);
       } catch (IllegalArgumentException e) {
@@ -47,7 +49,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         LOGGER.error(MessageResource.getMessage(LoggerCodeCache.TS_0003));
       }
     }
-
     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
       UserDetails userDetails = userDetailsService.loadUserByUsername(username);
       if (jwtTokenUtil.validateToken(jwtToken, username)) {
@@ -59,6 +60,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
       }
     }
+    trackRequest(request);
     chain.doFilter(request, response);
+  }
+
+  private void trackRequest(HttpServletRequest httpServletRequest) {
+    try {
+      userService.trackRequest(httpServletRequest);
+    } catch (Exception ex) {
+    }
   }
 }

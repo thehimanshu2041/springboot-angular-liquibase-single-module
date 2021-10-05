@@ -1,17 +1,13 @@
 package com.trisul.service.impl;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.trisul.core.security.user.UserStore;
 import com.trisul.dao.MenuDao;
+import com.trisul.dao.UserDao;
 import com.trisul.entity.MenuEntity;
 import com.trisul.mapper.MenuMapper;
 import com.trisul.model.MenuDetail;
 import com.trisul.service.MenuService;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,29 +19,15 @@ public class MenuServiceImpl implements MenuService {
 
   @Autowired MenuMapper menuMapper;
 
-  private static final Cache<Long, List<MenuDetail>> menuCacheBuilder =
-      CacheBuilder.newBuilder().initialCapacity(10).expireAfterAccess(10, TimeUnit.MINUTES).build();
+  @Autowired UserStore userStore;
 
-  @Override
+  @Autowired UserDao userDao;
+
   public List<MenuDetail> getMenuList() {
-    List<MenuDetail> menuCache = menuCacheBuilder.getIfPresent(1000000001L);
-    if (menuCache != null) {
-      return menuCache;
-    }
-    menuCache = getMappedMenuList();
-    menuCacheBuilder.put(1000000001L, menuCache);
-    return menuCache;
-  }
-
-  @Override
-  public Boolean createMenuDetail(MenuDetail menuDetail) {
-    return null != menuDao.createMenuDetail(menuMapper.convertMenuDetailToMenuEntity(menuDetail));
-  }
-
-  private List<MenuDetail> getMappedMenuList() {
     List<MenuEntity> finalMenuEntities = new ArrayList<>();
     Map<Long, MenuEntity> mapTmp = new HashMap<>();
-    List<MenuEntity> menuEntityList = menuDao.getMenuList();
+    List<MenuEntity> menuEntityList =
+        menuDao.getMenuList(null != userDao.findByUsername(userStore.getLoggedInUser()));
     for (MenuEntity current : menuEntityList) {
       mapTmp.put(current.getMenuID(), current);
     }
@@ -70,8 +52,28 @@ public class MenuServiceImpl implements MenuService {
       }
     }
 
-    return finalMenuEntities.stream()
-        .map(m -> menuMapper.convertMenuEntityToMenuDetail(m))
-        .collect(Collectors.toList());
+    List<MenuDetail> finalMenuDetail =
+        finalMenuEntities.stream()
+            .map(m -> menuMapper.convertMenuEntityToMenuDetail(m))
+            .collect(Collectors.toList());
+    finalMenuDetail.sort(Comparator.comparing(MenuDetail::getMenuPriority));
+    return finalMenuDetail;
   }
+
+  @Override
+  public Boolean createMenuDetail(MenuDetail menuDetail) {
+    return null != menuDao.createMenuDetail(menuMapper.convertMenuDetailToMenuEntity(menuDetail));
+  }
+
+  /*private static final Cache<Long, List<MenuDetail>> menuCacheBuilder =
+    CacheBuilder.newBuilder().initialCapacity(10).expireAfterAccess(10, TimeUnit.MINUTES).build();
+  public List<MenuDetail> getMenuList() {
+    List<MenuDetail> menuCache = menuCacheBuilder.getIfPresent(1000000001L);
+    if (menuCache != null) {
+      return menuCache;
+    }
+    menuCache = getMappedMenuList(status);
+    menuCacheBuilder.put(1000000001L, menuCache);
+    return menuCache;
+  }*/
 }

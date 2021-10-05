@@ -24,7 +24,7 @@
             <column name="USER_PASSWORD" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="USER_TITLE" type="VARCHAR(10)">
+            <column name="USER_TITLE" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="USER_FIRST_NAME" type="VARCHAR(25)">
@@ -33,7 +33,7 @@
             <column name="USER_LAST_NAME" type="VARCHAR(25)">
                 <constraints nullable="false"/>
             </column>
-            <column name="USER_GENDER" type="VARCHAR(10)">
+            <column name="USER_GENDER" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="USER_MOBILE" type="VARCHAR(15)">

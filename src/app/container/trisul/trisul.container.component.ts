@@ -10,7 +10,9 @@ import {
 import { MediaMatcher } from '@angular/cdk/layout';
 import { ColorScheme } from '../../shared/models/shared.model';
 import { BaseContainerComponent } from './base.container.component';
-import { MenuService } from '../service/menu.service';
+import { MenuService } from 'src/app/shared';
+import { AuthService } from 'src/app/shared/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ts-trisul-container-component',
@@ -31,8 +33,10 @@ export class NavBarComponent extends BaseContainerComponent implements OnInit, O
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
-    menuService: MenuService) {
-    super(menuService);
+    menuService: MenuService,
+    authService: AuthService,
+    router: Router) {
+    super(menuService, authService, router);
     this.mobileQuery = media.matchMedia('(max-width: 960px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);

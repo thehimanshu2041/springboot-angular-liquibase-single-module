@@ -6,17 +6,15 @@ import com.trisul.core.bean.validation.PasswordValidator;
 import com.trisul.core.bean.validation.UsernameValidator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- * @author h3kumar
- * @since 28/03/2021
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(name = "LoginDetail", description = "Login detail")
 public class LoginDetail {

@@ -1,12 +1,12 @@
 package com.trisul.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.trisul.core.security.user.UserStoreImpl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,7 +16,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Getter
 @Setter
 @AllArgsConstructor
-@Builder
 @Table(name = "MENU_ENTITY")
 public class MenuEntity {
   @Id
@@ -44,36 +43,36 @@ public class MenuEntity {
   private String menuKey;
 
   @Column(name = "MENU_ACTIVE", nullable = false)
-  private Boolean menuIsActive = true;
+  private Boolean menuIsActive;
 
   @Column(name = "MENU_IS_DELETED", nullable = false)
-  private Boolean menuIsDeleted = false;
+  private Boolean menuIsDeleted;
 
   @Column(name = "MENU_IS_ADMIN", nullable = false)
-  private Boolean menuIsAdmin = false;
+  private Boolean menuIsAdmin;
 
   @Column(name = "MENU_IS_VISIBLE", nullable = false)
-  private Boolean menuIsVisible = true;
+  private Boolean menuIsVisible;
 
   @Column(name = "MENU_IS_AUTH_REQ", nullable = false)
-  private Boolean menuIsAuthReq = false;
+  private Boolean menuIsAuthReq;
 
   @Column(name = "MENU_PRIORITY")
   private Long menuPriority;
 
   @Column(name = "MENU_CREATED_BY", nullable = false)
-  private String createdBy = "ENGINE";
+  private String menuCreatedBy;
 
   @Column(name = "MENU_UPDATED_BY", nullable = false)
-  private String updatedBy = "ENGINE";
+  private String menuUpdatedBy;
 
   @CreationTimestamp
   @Column(name = "MENU_CREATED_DATE_TIME", nullable = false)
-  private Date createdDateTime;
+  private Date menuCreatedDateTime;
 
   @UpdateTimestamp
   @Column(name = "MENU_MODIFIED_DATE_TIME", nullable = false)
-  private Date modifiedDateTime;
+  private Date menuModifiedDateTime;
 
   @Transient private List<MenuEntity> children;
 
@@ -88,5 +87,23 @@ public class MenuEntity {
 
   public void addChild(MenuEntity child) {
     if (!this.children.contains(child) && child != null) this.children.add(child);
+  }
+
+  @PrePersist
+  private void prePersistFunction() {
+    UserStoreImpl userStore = new UserStoreImpl();
+    this.menuCreatedBy = userStore.getLoggedInUser();
+    this.menuUpdatedBy = userStore.getLoggedInUser();
+    this.menuIsActive = true;
+    this.menuIsDeleted = false;
+    this.menuIsAdmin = false;
+    this.menuIsVisible = true;
+    this.menuIsAuthReq = false;
+  }
+
+  @PreUpdate
+  public void preUpdateFunction() {
+    UserStoreImpl userStore = new UserStoreImpl();
+    this.menuUpdatedBy = userStore.getLoggedInUser();
   }
 }

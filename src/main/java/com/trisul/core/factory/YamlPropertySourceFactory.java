@@ -8,10 +8,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
 
-/**
- * @author h3kumar
- * @since 01/01/2021
- */
 public class YamlPropertySourceFactory implements PropertySourceFactory {
 
   @Override

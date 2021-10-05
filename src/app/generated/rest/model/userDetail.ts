@@ -9,12 +9,19 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { CodeDetail } from './codeDetail';
+import { AddressDetail } from './addressDetail';
+import { CardDetail } from './cardDetail';
 
 
 /**
  * UserDetail model
  */
 export interface UserDetail { 
+    /**
+     * Provide id
+     */
+    id?: number;
     /**
      * Provide username
      */
@@ -27,10 +34,7 @@ export interface UserDetail {
      * Provide password
      */
     password: string;
-    /**
-     * Provide title
-     */
-    title: string;
+    title: CodeDetail;
     /**
      * Provide firstname
      */
@@ -39,10 +43,7 @@ export interface UserDetail {
      * Provide lastname
      */
     lastName: string;
-    /**
-     * Provide gender
-     */
-    gender: string;
+    gender: CodeDetail;
     /**
      * Provide dob
      */
@@ -51,5 +52,7 @@ export interface UserDetail {
      * Provide mobile
      */
     mobile: string;
+    addressDetail: AddressDetail;
+    cardDetail: CardDetail;
 }
 

@@ -1,19 +1,30 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './main';
+import { DashboardComponent, LoginComponent } from './main';
+import { RegistrationComponent } from './main/registration';
+import { AuthGuard } from './shared/authentication';
+import { NoAuthGuard } from './shared/authentication/no.auth.guard';
 
 const routes: Routes = [
   {
     path: '',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [NoAuthGuard]
   },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [NoAuthGuard]
+  },
+  {
+    path: 'registration',
+    component: RegistrationComponent,
+    canActivate: [NoAuthGuard]
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./main/dashboard').then(module => module.DashboardModule)
+    component: DashboardComponent,
+    canActivate: [AuthGuard]
   }
 ];
 

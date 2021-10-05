@@ -1,19 +1,24 @@
 import { Injectable } from "@angular/core";
+import { SessionStorage } from "ngx-webstorage";
 import { Observable, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import { AuthenticationDetail, UserServiceService } from "src/app/generated/rest";
+import { AuthenticationDetail, AuthServiceService } from "src/app/generated/rest";
+import { MenuService } from ".";
 
 
 @Injectable()
 export class AuthService {
 
+  @SessionStorage('AUTHDETAIL')
   public authSession: AuthenticationDetail;
 
-  constructor(private userService: UserServiceService) { }
+  constructor(
+    private authService: AuthServiceService,
+    private menuService: MenuService) { }
 
   login(username: string, password: string): Observable<boolean> {
     const loginPayload = { username: username, password: password };
-    return this.userService.doLogin(loginPayload)
+    return this.authService.doLogin(loginPayload)
       .pipe(
         mergeMap((map) => {
           if (map.access_token) {
@@ -27,11 +32,20 @@ export class AuthService {
       );
   }
 
-  private actionOnLogin(authDetail: AuthenticationDetail): void {
+  actionOnLogin(authDetail: AuthenticationDetail): void {
     this.authSession = authDetail;
+    this.menuService.getMenuList();
   }
 
   actionOnLogout(): void {
     this.authSession = null;
+    this.menuService.getMenuList();
+  }
+
+  isAuthenticated(): boolean {
+    if (this.authSession && this.authSession.access_token) {
+      return true;
+    }
+    return false;
   }
 }

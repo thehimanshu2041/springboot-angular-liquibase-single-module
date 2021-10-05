@@ -8,19 +8,29 @@ import { NgxWebstorageModule } from 'ngx-webstorage';
 import { AlertService, ThemeService } from './services';
 import { StaticTranslateLoader } from './translate';
 import { TranslateLoader, TranslateModule, TranslateStore } from '@ngx-translate/core';
-import { TrisulServiceService, UserServiceService } from 'src/app/generated/rest';
-import { MenuService } from 'src/app/container';
+import { AuthServiceService, MenuServiceService, StaticDataServiceService, UserServiceService } from 'src/app/generated/rest';
 import { AuthService } from './services/auth.service';
 import { ToastrModule } from 'ngx-toastr';
-import { AlertAreaModule } from './components';
+import { AlertAreaModule, LabelModule } from './components';
+import { MenuService } from './services/menu.service';
+import { TooltipModule } from './components/tooltip';
+import { DirectiveModule } from './directives/directive.module';
+import { PipeModule } from './pipes/pipe.module';
+import { CardModule } from 'ngx-card';
 
-const API_CLIENT = [
-  TrisulServiceService,
-  UserServiceService
+const EXPORTED_SERVICES = [
+  MenuServiceService,
+  UserServiceService,
+  AuthServiceService,
+  StaticDataServiceService
 ];
 
-const EXTERNAL_MODULES = [
-  AlertAreaModule
+const EXPORTED_MODULES = [
+  AlertAreaModule,
+  LabelModule,
+  TooltipModule,
+  DirectiveModule,
+  PipeModule
 ];
 
 const toastConfig = {
@@ -43,6 +53,7 @@ const toastConfig = {
     ReactiveFormsModule,
     LayoutModule,
     OverlayModule,
+    CardModule,
     NgxWebstorageModule.forRoot({ prefix: 'TRISUL|' }),
     TranslateModule.forChild({
       defaultLanguage: 'en',
@@ -52,7 +63,7 @@ const toastConfig = {
       },
     }),
     ToastrModule.forRoot(toastConfig),
-    ...EXTERNAL_MODULES
+    ...EXPORTED_MODULES
   ],
   exports: [
     MaterialModule,
@@ -62,9 +73,10 @@ const toastConfig = {
     LayoutModule,
     OverlayModule,
     NgxWebstorageModule,
+    CardModule,
     TranslateModule,
     ToastrModule,
-    ...EXTERNAL_MODULES
+    ...EXPORTED_MODULES
   ],
   providers: [
     StaticTranslateLoader,
@@ -73,10 +85,11 @@ const toastConfig = {
     ThemeService,
     MenuService,
     AuthService,
-    ...API_CLIENT
+    ...EXPORTED_SERVICES
   ],
   schemas: [
-    CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA
+    CUSTOM_ELEMENTS_SCHEMA,
+    NO_ERRORS_SCHEMA
   ]
 })
 export class SharedModule { }

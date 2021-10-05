@@ -4,20 +4,26 @@ import com.trisul.core.exception.FaultCodeCache;
 import com.trisul.core.exception.exceptions.NotFoundException;
 import com.trisul.core.exception.exceptions.ServiceException;
 import com.trisul.core.security.jwt.JwtTokenUtil;
+import com.trisul.core.security.jwt.RoleTypeEnum;
+import com.trisul.core.security.jwt.SeqConstant;
+import com.trisul.core.security.user.UserStore;
+import com.trisul.dao.StaticDataDao;
 import com.trisul.dao.UserDao;
 import com.trisul.dao.UserRoleDao;
+import com.trisul.entity.IPEntity;
 import com.trisul.entity.UserEntity;
 import com.trisul.entity.UserRoleEntity;
 import com.trisul.mapper.UserMapper;
 import com.trisul.model.AuthenticationDetail;
 import com.trisul.model.LoginDetail;
-import com.trisul.model.RoleTypeEnum;
 import com.trisul.model.UserDetail;
+import com.trisul.service.ResolverService;
 import com.trisul.service.UserService;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -26,10 +32,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
-/**
- * @author h3kumar
- * @since 16/05/2021
- */
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
@@ -37,9 +39,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
   @Autowired UserRoleDao userRoleDao;
 
+  @Autowired StaticDataDao staticDataDao;
+
   @Autowired JwtTokenUtil jwtTokenUtil;
 
   @Autowired UserMapper userMapper;
+
+  @Autowired UserStore userStore;
+
+  @Autowired ResolverService resolverService;
 
   @Override
   public UserDetails loadUserByUsername(String username) {
@@ -66,18 +74,90 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   @Override
-  public boolean createUser(UserDetail userDetail) {
+  public Boolean createUser(UserDetail userDetail) {
     if (null != userDao.findByUsername(userDetail.getUsername())) {
       throw new ServiceException(FaultCodeCache.TS_0003);
     }
     if (null != userDao.findByEmail(userDetail.getEmail())) {
       throw new ServiceException(FaultCodeCache.TS_0004);
     }
+    if (null != userDetail.getTitle()) {
+      userDetail.setTitle(resolverService.resolveCodeDetail(userDetail.getTitle()));
+    }
+    if (null != userDetail.getGender()) {
+      userDetail.setGender(resolverService.resolveCodeDetail(userDetail.getGender()));
+    }
+
+    if (null != userDetail.getAddressDetail()) {
+      if (null != userDetail.getAddressDetail().getAddressCity()) {
+        userDetail
+            .getAddressDetail()
+            .setAddressCity(
+                resolverService.resolveCscDetail(userDetail.getAddressDetail().getAddressCity()));
+      }
+      if (null != userDetail.getAddressDetail().getAddressState()) {
+        userDetail
+            .getAddressDetail()
+            .setAddressState(
+                resolverService.resolveCscDetail(userDetail.getAddressDetail().getAddressState()));
+      }
+      if (null != userDetail.getAddressDetail().getAddressCountry()) {
+        userDetail
+            .getAddressDetail()
+            .setAddressCountry(
+                resolverService.resolveCscDetail(
+                    userDetail.getAddressDetail().getAddressCountry()));
+      }
+    }
+
     UserEntity userEntity = userMapper.convertUserDetailToUserEntity(userDetail);
+    userEntity.getAddressEntity().setUserEntity(userEntity);
+    userEntity.getCardEntity().setUserEntity(userEntity);
     userEntity.setPassword(BCrypt.hashpw(userDetail.getPassword(), BCrypt.gensalt()));
     userEntity.setUserRoles(
         userRoleDao.findAllByNames(Collections.singletonList(RoleTypeEnum.USER)));
-    return null != userDao.save(userEntity);
+    userDao.save(userEntity);
+    return true;
+  }
+
+  @Override
+  public UserDetail getUserDetail() {
+    UserEntity userEntity = userDao.findByUsername(userStore.getLoggedInUser());
+    if (null == userEntity) {
+      throw new ServiceException(FaultCodeCache.TS_0007);
+    }
+    return userMapper.convertUserEntityToUserDetail(
+        userEntity,
+        staticDataDao.getCodeEntityByCodeId(userEntity.getTitle()),
+        staticDataDao.getCodeEntityByCodeId(userEntity.getGender()),
+        staticDataDao.getCityByCityId(userEntity.getAddressEntity().getAddressCity()),
+        staticDataDao.getStateByStateId(userEntity.getAddressEntity().getAddressState()),
+        staticDataDao.getCountryByCountryId(userEntity.getAddressEntity().getAddressCountry()));
+  }
+
+  @Override
+  public void trackRequest(HttpServletRequest request) {
+    IPEntity ipEntity = new IPEntity();
+    String token = jwtTokenUtil.getValidToken(request.getHeader(SeqConstant.HEADER));
+    ipEntity.setIpToken(token);
+    ipEntity.setIpUsername(null != token ? jwtTokenUtil.getUsernameFromToken(token) : null);
+    ipEntity.setIpPort(Integer.toString(request.getServerPort()));
+    ipEntity.setIpContextPath(request.getContextPath());
+    ipEntity.setIpRequestPath(request.getRequestURI());
+    ipEntity.setIpAddress(userStore.getIpAddress(request));
+    ipEntity.setIpMethod(request.getMethod());
+    ipEntity.setIpPostalCode(null);
+    ipEntity.setIpLatitude(null);
+    ipEntity.setIpLongitude(null);
+    ipEntity.setIpCity(null);
+    ipEntity.setIpState(null);
+    ipEntity.setIpCountry(null);
+    ipEntity.setIpMetroCode(null);
+    ipEntity.setIpAreaCode(null);
+    ipEntity.setIpNum(null);
+    ipEntity.setIpURL(null);
+    ipEntity.setIpReferer(null);
+    userDao.saveTrackedRequest(ipEntity);
   }
 
   private Set<SimpleGrantedAuthority> getAuthorities(UserEntity user) {
@@ -96,7 +176,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
   }
 
   private static boolean checkPassword(String password_plaintext, String stored_hash) {
-    boolean password_verified = false;
+    boolean password_verified;
     if (null == stored_hash || !stored_hash.startsWith("$2a$")) {
       throw new ServiceException(FaultCodeCache.TS_0005);
     }

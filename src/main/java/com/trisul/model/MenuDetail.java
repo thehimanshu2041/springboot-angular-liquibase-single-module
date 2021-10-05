@@ -7,13 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(name = "MenuDetail", description = "Menu Detail")
 public class MenuDetail {
